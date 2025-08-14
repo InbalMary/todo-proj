@@ -6,13 +6,14 @@ import { logout } from '../store/actions/user.actions.js'
 import { UserMsg } from "./UserMsg.jsx"
 import { LoginSignup } from './LoginSignup.jsx'
 import { showErrorMsg } from '../services/event-bus.service.js'
-
+import { userService } from "../services/user.service.js"
 
 export function AppHeader() {
     const navigate = useNavigate()
     // const [user, setUser] = useState(userService.getLoggedinUser())
-    const loggedinUser = useSelector(state => state.loggedinUser)
+    const user = useSelector(state => state.loggedinUser)
     const todos = useSelector(state => state.todos)
+    const loggedinUser = userService.getLoggedinUser()
 
     const totalTodos = todos.length
     const todosDoneCount = todos.filter(todo => todo.isDone).length
@@ -24,15 +25,19 @@ export function AppHeader() {
                 showErrorMsg('OOPs try again')
             })
     }
-console.log('loggedinUser', loggedinUser)
+    console.log('user', user)
     return (
         <header className="app-header full main-layout">
             <section className="header-container">
                 <h1>React Todo App</h1>
-                {loggedinUser ? (
+                {user ? (
                     < section >
-                        <Link to={`/user/${loggedinUser._id}`}>Hello {loggedinUser.fullname}</Link>
-                        <p>Balance: {loggedinUser.balance}$</p>
+                        {loggedinUser && (
+                            <Link to={`/user/${loggedinUser._id}`}>
+                                Hello {loggedinUser.fullname}
+                            </Link>
+                        )}
+                        <p>Balance: {user.balance}$</p>
                         <button onClick={onLogout}>Logout</button>
                     </ section >
                 ) : (

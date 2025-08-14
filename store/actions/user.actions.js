@@ -34,3 +34,9 @@ export function addActivity(activity) {
         .then(updatedUser => {
             store.dispatch({ type: SET_USER, loggedinUser: updatedUser })})
 }
+
+export function updateUser(user) {
+    return userService.update(user)
+        .then(user => {
+            store.dispatch({ type: SET_USER, loggedinUser: user })})
+}

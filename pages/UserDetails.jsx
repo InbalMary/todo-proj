@@ -4,35 +4,117 @@ const { useSelector, useDispatch } = ReactRedux
 
 import { userService } from "../services/user.service.js"
 import { TodoList } from '../cmps/TodoList.jsx'
-import { todoService } from '../services/todo.service.js'
-import { loadUser } from '../store/actions/user.actions.js'
+import { loadUser, updateUser } from '../store/actions/user.actions.js'
 
 export function UserDetails() {
     const user = useSelector(state => state.loggedinUser)
+    const loggedinUser = userService.getLoggedinUser()
+    const [userDetails, setUserDetails] = useState(null)
 
     const params = useParams()
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
+    const isLoggedinUser = loggedinUser && loggedinUser._id === params.userId
+
     useEffect(() => {
         loadUser(params.userId)
     }, [params.userId])
 
+    useEffect(() => {
+        if (user) {
+            setUserDetails({
+                ...user,
+                prefs: user.prefs || { color: 'black', bgColor: 'white' }
+            })
+        }
+    }, [user])
 
-    if (!user) return <div>Loading...</div>
+    function handleChange({ target }) {
+        const field = target.name
+        let value = target.value
 
-    const userTodos = user.activities || []
+        switch (target.type) {
+            case 'number':
+            case 'range':
+                value = +value || ''
+                break
+            case 'checkbox':
+                value = target.checked
+                break
+            default: break
+        }
 
-    return <section className="user-details">
-        <h1>User: {user.fullname}</h1>
-        {/* <pre>
-            {JSON.stringify(user, null, 2)}
-        </pre> */}
-        <section>
-            {!userTodos || (!userTodos.length && <h2>No todos to show</h2>)}
-            {userTodos && userTodos.length > 0 && <h3>Manage your todos</h3>}
-            <TodoList todos={userTodos} />
+        if (field.startsWith('prefs.')) {
+            const key = field.split('.')[1]
+            setUserDetails(prev => ({
+                ...prev,
+                prefs: { ...prev.prefs, [key]: value }
+            }))
+        } else {
+            setUserDetails(prev => ({ ...prev, [field]: value }))
+        }
+    }
+
+    function onSave(ev) {
+        ev.preventDefault()
+        updateUser(userDetails)
+    }
+
+    if (!userDetails) return <div>Loading...</div>
+
+    const userTodos = userDetails.activities || []
+
+    return (
+        <section
+            className="user-details"
+            style={{
+                color: userDetails.prefs.color,
+                backgroundColor: userDetails.prefs.bgColor
+            }}
+        >
+            <h1>User: {userDetails.fullname}</h1>
+
+            <section>
+                {!userTodos.length && <h2>No todos to show</h2>}
+                {userTodos.length > 0 && <h3>Manage your todos</h3>}
+                <TodoList todos={userTodos} />
+            </section>
+
+            {isLoggedinUser && (
+                <form onSubmit={onSave} className="edit-prefs">
+                    <label>
+                        Fullname:
+                        <input
+                            type="text"
+                            name="fullname"
+                            value={userDetails.fullname}
+                            onChange={handleChange}
+                        />
+                    </label>
+                    <label>
+                        Text Color:
+                        <input
+                            type="color"
+                            name="prefs.color"
+                            value={userDetails.prefs.color}
+                            onChange={handleChange}
+                        />
+                    </label>
+                    <label>
+                        Background Color:
+                        <input
+                            type="color"
+                            name="prefs.bgColor"
+                            value={userDetails.prefs.bgColor}
+                            onChange={handleChange}
+                        />
+                    </label>
+                    <button>Save</button>
+                </form>
+            )}
+
+            <Link to="/">Back Home</Link>
         </section>
-        <Link to="/">Back Home</Link>
-    </section>
+    )
 }

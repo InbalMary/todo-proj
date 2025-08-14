@@ -11,6 +11,7 @@ export const userService = {
     getEmptyCredentials,
     updateBalance,
     addActivity,
+    update,
 }
 const STORAGE_KEY_LOGGEDIN = 'user'
 const STORAGE_KEY = 'userDB'
@@ -76,6 +77,20 @@ function addActivity(activity) {
                 })
         })
 }
+
+function update(user) {
+    user.updatedAt = Date.now()
+
+    return storageService.put(STORAGE_KEY, user)
+        .then(savedUser => {
+            const loggedinUser = getLoggedinUser()
+            if (loggedinUser && loggedinUser._id === savedUser._id) {
+                _setLoggedinUser(savedUser)
+            }
+            return savedUser
+        })
+}
+
 
 function _setLoggedinUser(user) {
     const userToSave = { _id: user._id, fullname: user.fullname, balance: user.balance, activities: user.activities }
