@@ -5,13 +5,14 @@ import { utilService } from '../services/util.service.js'
 
 export function TodoFilter() {
     const filterBy = useSelector(state => state.filterBy)
+    console.log('filterBy in todofilter', filterBy)
     const [filterByToEdit, setFilterByToEdit] = useState({ ...filterBy })
 
     const setFilterDebounced = useRef(utilService.debounce((newFilter) => {
-    if (JSON.stringify(newFilter) !== JSON.stringify(filterBy)) {
-        setFilter(newFilter)
-    }
-}, 600)).current
+        if (JSON.stringify(newFilter) !== JSON.stringify(filterBy)) {
+            setFilter(newFilter)
+        }
+    }, 600)).current
 
 
     useEffect(() => {
@@ -48,7 +49,7 @@ export function TodoFilter() {
         setFilter(filterByToEdit)
     }
 
-    const { txt = '', importance = '' } = filterByToEdit
+    const { txt = '', importance = '', isDone = "" } = filterByToEdit
     return (
         <section className="todo-filter">
             <h2>Filter Todos</h2>
@@ -60,9 +61,17 @@ export function TodoFilter() {
                 <input value={importance} onChange={handleChange}
                     type="number" placeholder="By Importance" id="importance" name="importance"
                 />
+
+                <label htmlFor="isDone">Status: </label>
+                <select id="isDone" name="isDone" value={isDone} onChange={handleChange}>
+                    <option value="">All</option>
+                    <option value="false">Active</option>
+                    <option value="true">Done</option>
+                </select>
+
                 <button className='btn' type="button" onClick={() => {
                     clearFilter()
-                    setFilterByToEdit({ txt: '', importance: '' })
+                    setFilterByToEdit({ txt: '', importance: '', isDone: '' })
                 }}>Clear Filter</button>
                 <button hidden>Set Filter</button>
             </form>

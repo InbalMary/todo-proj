@@ -43,6 +43,12 @@ function query(filterBy = {}) {
                 todos = todos.filter(todo => todo.importance >= filterBy.importance)
             }
 
+             if (filterBy.isDone === "true") {
+                todos = todos.filter(todo => todo.isDone === true)
+            } else if (filterBy.isDone === "false") {
+                todos = todos.filter(todo => todo.isDone === false)
+            }
+
             return todos
         })
 }
@@ -110,6 +116,7 @@ function _createTodos() {
         }
         utilService.saveToStorage(TODO_KEY, todos)
     }
+    console.log('todos', todos)
 }
 
 function _createTodo(txt, importance) {
