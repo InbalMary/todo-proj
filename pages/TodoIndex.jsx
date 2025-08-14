@@ -3,7 +3,7 @@ import { TodoList } from "../cmps/TodoList.jsx"
 import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
-import { loadTodos, removeTodo, saveTodo } from '../store/actions/todo.actions.js'
+import { clearFilter, loadTodos, removeTodo, saveTodo, setFilter,  } from '../store/actions/todo.actions.js'
 
 const { useState, useEffect } = React
 const { Link, useSearchParams } = ReactRouterDOM
@@ -28,7 +28,7 @@ export function TodoIndex() {
                 console.eror('err:', err)
                 showErrorMsg('Cannot load todos')
             })
-    }, [])
+    }, [filterBy])
 
     function onRemoveTodo(todoId) {
         removeTodo(todoId)
@@ -58,7 +58,7 @@ export function TodoIndex() {
     if (isLoading) return <div>Loading...</div>
     return (
         <section className="todo-index">
-            <TodoFilter />
+            <TodoFilter filterBy={filterBy} setFilter={setFilter} clearFilter={clearFilter} />
             <div>
                 <Link to="/todo/edit" className="btn" >Add Todo</Link>
             </div>

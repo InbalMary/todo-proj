@@ -22,3 +22,9 @@ export function balance(amount) {
             store.dispatch({ type: SET_USER_BALANCE, balance: updatedBalance })
         })
 }
+
+export function loadUser(userId) {
+    return userService.getById(userId)
+        .then(user => {
+            store.dispatch({ type: SET_USER, loggedinUser: user })})
+}

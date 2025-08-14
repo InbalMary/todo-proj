@@ -64,7 +64,7 @@ function updateBalance(diff) {
 }
 
 function _setLoggedinUser(user) {
-    const userToSave = { _id: user._id, fullname: user.fullname, balance: user.balance }
+    const userToSave = { _id: user._id, fullname: user.fullname, balance: user.balance, activities: user.activities }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN, JSON.stringify(userToSave))
     return userToSave
 }

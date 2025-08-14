@@ -72,7 +72,7 @@ function save(todo) {
         return storageService.put(TODO_KEY, todo)
     } else {
         todo.createdAt = todo.updatedAt = Date.now()
-
+        // todo.creator = loggedinuser
         return storageService.post(TODO_KEY, todo)
     }
 }

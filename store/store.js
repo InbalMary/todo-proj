@@ -1,4 +1,3 @@
-import { balance } from "./actions/user.actions"
 
 const { createStore } = Redux
 

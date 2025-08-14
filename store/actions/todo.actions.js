@@ -2,8 +2,10 @@ import { todoService } from '../../services/todo.service.js'
 import { store, ADD_TODO, REMOVE_TODO, SET_TODOS, UPDATE_TODO, SET_FILTER, TOGGLE_LOADING, SET_LOADING, } from '../store.js'
 
 export function loadTodos(filterBy = {}) {
+    store.dispatch({ type: SET_LOADING, isLoading: true })
     return todoService.query(filterBy)
         .then(todos => store.dispatch({ type: SET_TODOS, todos }))
+        .finally(() => store.dispatch({ type: SET_LOADING, isLoading: false }))
 }
 
 export function removeTodo(todoId) {
@@ -20,17 +22,17 @@ export function saveTodo(todoToSave) {
 
 export function setFilter(filterBy) {
     store.dispatch({ type: SET_FILTER, filterBy })
-    return _loadTodosWithLoading(filterBy)
+    // return _loadTodosWithLoading(filterBy)
 }
 
 export function clearFilter() {
     store.dispatch({ type: SET_FILTER, filterBy: {} })
-    return _loadTodosWithLoading()
+    // return _loadTodosWithLoading()
 }
 
-function _loadTodosWithLoading(filterBy = {}) {
-    store.dispatch({ type: 'SET_LOADING', isLoading: true })
-    return todoService.query(filterBy)
-        .then(todos => store.dispatch({ type: SET_TODOS, todos }))
-        .finally(() => store.dispatch({ type: 'SET_LOADING', isLoading: false }))
-}
+// function _loadTodosWithLoading(filterBy = {}) {
+//     store.dispatch({ type: 'SET_LOADING', isLoading: true })
+//     return todoService.query(filterBy)
+//         .then(todos => store.dispatch({ type: SET_TODOS, todos }))
+//         .finally(() => store.dispatch({ type: 'SET_LOADING', isLoading: false }))
+// }
