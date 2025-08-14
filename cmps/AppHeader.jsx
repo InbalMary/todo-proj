@@ -24,7 +24,7 @@ export function AppHeader() {
                 showErrorMsg('OOPs try again')
             })
     }
-
+console.log('loggedinUser', loggedinUser)
     return (
         <header className="app-header full main-layout">
             <section className="header-container">
@@ -32,6 +32,7 @@ export function AppHeader() {
                 {loggedinUser ? (
                     < section >
                         <Link to={`/user/${loggedinUser._id}`}>Hello {loggedinUser.fullname}</Link>
+                        <p>Balance: {loggedinUser.balance}$</p>
                         <button onClick={onLogout}>Logout</button>
                     </ section >
                 ) : (

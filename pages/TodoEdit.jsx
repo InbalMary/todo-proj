@@ -1,6 +1,7 @@
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { saveTodo } from '../store/actions/todo.actions.js'
+import { balance } from '../store/actions/user.actions.js'
 
 const { useState, useEffect } = React
 const { useNavigate, useParams } = ReactRouterDOM
@@ -55,6 +56,16 @@ export function TodoEdit() {
             })
     }
 
+    function onCheckIsDone(ev) {
+        const checked = ev.target.checked
+        setTodoToEdit(prev => ({ ...prev, isDone: checked }))
+        if (checked) {
+            balance(10)
+                .then(() => showSuccessMsg(`10$ was added to tour balance!`))
+                .catch(err => showErrorMsg(err.message))
+        }
+    }
+
     const { txt, importance, isDone } = todoToEdit
 
     return (
@@ -67,7 +78,7 @@ export function TodoEdit() {
                 <input onChange={handleChange} value={importance} type="number" name="importance" id="importance" />
 
                 <label htmlFor="isDone">isDone:</label>
-                <input onChange={handleChange} value={isDone} type="checkbox" name="isDone" id="isDone" />
+                <input  onChange={onCheckIsDone} checked={isDone} type="checkbox" name="isDone" id="isDone" />
 
 
                 <button>Save</button>

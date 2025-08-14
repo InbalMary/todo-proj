@@ -1,3 +1,5 @@
+import { balance } from "./actions/user.actions"
+
 const { createStore } = Redux
 
 export const SET_TODOS = 'SET_TODOS'
@@ -6,7 +8,7 @@ export const ADD_TODO = 'ADD_TODO'
 export const UPDATE_TODO = 'UPDATE_TODO'
 
 export const SET_USER = 'SET_USER'
-export const SET_USER_SCORE = 'SET_USER_SCORE'
+export const SET_USER_BALANCE = 'SET_USER_BALANCE'
 
 export const TOGGLE_LOADING = 'TOGGLE_TOGGLE_LOADING'
 export const SET_LOADING = 'SET_LOADING'
@@ -41,8 +43,8 @@ export function appReducer(state = initialState, cmd = {}) {
         case SET_USER:
             return { ...state, loggedinUser: cmd.loggedinUser }
 
-        case SET_USER_SCORE:
-            return { ...state, loggedinUser: { ...state.loggedinUser, score: cmd.score } }
+        case SET_USER_BALANCE:
+            return { ...state, loggedinUser: { ...state.loggedinUser, balance: cmd.balance } }
 
         case TOGGLE_LOADING:
             return { ...state, isLoading: !state.isLoading }
