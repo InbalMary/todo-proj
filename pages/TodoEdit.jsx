@@ -1,7 +1,8 @@
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { saveTodo } from '../store/actions/todo.actions.js'
-import { balance } from '../store/actions/user.actions.js'
+import { addActivity, balance } from '../store/actions/user.actions.js'
+import { userService } from '../services/user.service.js'
 
 const { useState, useEffect } = React
 const { useNavigate, useParams } = ReactRouterDOM
@@ -45,10 +46,18 @@ export function TodoEdit() {
 
     function onSaveTodo(ev) {
         ev.preventDefault()
+        const user = userService.getLoggedinUser()
+        if (!user) {
+            showErrorMsg('You must be logged in to create a todo')
+            return
+        }
         saveTodo(todoToEdit)
             .then(({ todo: savedTodo }) => {
-                navigate('/todo')
-                showSuccessMsg(`Todo Saved (id: ${savedTodo._id})`)
+                addActivity(savedTodo)
+                    .then(() => {
+                        navigate('/todo')
+                        showSuccessMsg(`Todo Saved (id: ${savedTodo._id})`)
+                    })
             })
             .catch(err => {
                 showErrorMsg('Cannot save todo')
@@ -78,7 +87,7 @@ export function TodoEdit() {
                 <input onChange={handleChange} value={importance} type="number" name="importance" id="importance" />
 
                 <label htmlFor="isDone">isDone:</label>
-                <input  onChange={onCheckIsDone} checked={isDone} type="checkbox" name="isDone" id="isDone" />
+                <input onChange={onCheckIsDone} checked={isDone} type="checkbox" name="isDone" id="isDone" />
 
 
                 <button>Save</button>

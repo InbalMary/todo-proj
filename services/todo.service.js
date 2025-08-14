@@ -1,5 +1,6 @@
 import { utilService } from './util.service.js'
 import { storageService } from './async-storage.service.js'
+import { userService } from './user.service.js'
 
 const TODO_KEY = 'todoDB'
 
@@ -72,7 +73,7 @@ function save(todo) {
         return storageService.put(TODO_KEY, todo)
     } else {
         todo.createdAt = todo.updatedAt = Date.now()
-        // todo.creator = loggedinuser
+        todo.creator = userService.getLoggedinUser()
         return storageService.post(TODO_KEY, todo)
     }
 }

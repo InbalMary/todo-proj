@@ -10,6 +10,7 @@ export const userService = {
     query,
     getEmptyCredentials,
     updateBalance,
+    addActivity,
 }
 const STORAGE_KEY_LOGGEDIN = 'user'
 const STORAGE_KEY = 'userDB'
@@ -36,7 +37,7 @@ function signup({ username, password, fullname }) {
     user.createdAt = user.updatedAt = Date.now()
     user.balance = 10000
     user.activities = []
-console.log('user', user)
+    console.log('user', user)
     return storageService.post(STORAGE_KEY, user)
         .then(_setLoggedinUser)
 }
@@ -59,6 +60,19 @@ function updateBalance(diff) {
                 .then((user) => {
                     _setLoggedinUser(user)
                     return user.balance
+                })
+        })
+}
+
+function addActivity(activity) {
+    console.log('Adding activity:', activity)
+    return userService.getById(getLoggedinUser()._id)
+        .then(user => {
+            user.activities = [...(user.activities || []), activity]
+            return storageService.put(STORAGE_KEY, user)
+                .then((user) => {
+                    _setLoggedinUser(user)
+                    return user.activities
                 })
         })
 }
