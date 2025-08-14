@@ -7,7 +7,12 @@ export function TodoFilter() {
     const filterBy = useSelector(state => state.filterBy)
     const [filterByToEdit, setFilterByToEdit] = useState({ ...filterBy })
 
-    const setFilterDebounced = useRef(utilService.debounce(setFilter, 600)).current
+    const setFilterDebounced = useRef(utilService.debounce((newFilter) => {
+    if (JSON.stringify(newFilter) !== JSON.stringify(filterBy)) {
+        setFilter(newFilter)
+    }
+}, 600)).current
+
 
     useEffect(() => {
         setFilterByToEdit({ ...filterBy })

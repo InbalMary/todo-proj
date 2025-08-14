@@ -20,10 +20,17 @@ export function saveTodo(todoToSave) {
 
 export function setFilter(filterBy) {
     store.dispatch({ type: SET_FILTER, filterBy })
-    return loadTodos(filterBy)
+    return _loadTodosWithLoading(filterBy)
 }
 
 export function clearFilter() {
     store.dispatch({ type: SET_FILTER, filterBy: {} })
-    return loadTodos()
+    return _loadTodosWithLoading()
+}
+
+function _loadTodosWithLoading(filterBy = {}) {
+    store.dispatch({ type: 'SET_LOADING', isLoading: true })
+    return todoService.query(filterBy)
+        .then(todos => store.dispatch({ type: SET_TODOS, todos }))
+        .finally(() => store.dispatch({ type: 'SET_LOADING', isLoading: false }))
 }

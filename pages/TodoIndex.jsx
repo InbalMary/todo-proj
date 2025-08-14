@@ -13,8 +13,8 @@ export function TodoIndex() {
 
     // const [todos, setTodos] = useState(null)
     const todos = useSelector(state => state.todos)
-    const dispatch = useDispatch()
-
+    const isLoading = useSelector(state => state.isLoading)
+    console.log('isLoading', isLoading)
     // Special hook for accessing search-params:
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -30,7 +30,7 @@ export function TodoIndex() {
                 console.eror('err:', err)
                 showErrorMsg('Cannot load todos')
             })
-    }, [filterBy])
+    }, [])
 
     function onRemoveTodo(todoId) {
         removeTodo(todoId)
@@ -55,7 +55,7 @@ export function TodoIndex() {
             })
     }
 
-    if (!todos) return <div>Loading...</div>
+    if (isLoading) return <div>Loading...</div>
     return (
         <section className="todo-index">
             <TodoFilter />
