@@ -2,6 +2,20 @@ import { utilService } from './util.service.js'
 import { storageService } from './async-storage.service.js'
 
 const TODO_KEY = 'todoDB'
+
+const colors = [
+    '#faafa8',
+    '#f39f76',
+    '#fff8b8',
+    '#e2f6d3',
+    '#b4ddd3',
+    '#aeccdc',
+    '#d3bfdb',
+    '#f6e2dd',
+    '#e9e3d4',
+    '#efeff1',
+]
+
 _createTodos()
 
 export const todoService = {
@@ -102,6 +116,7 @@ function _createTodo(txt, importance) {
     const todo = getEmptyTodo(txt, importance)
     todo._id = utilService.makeId()
     todo.createdAt = todo.updatedAt = Date.now() - utilService.getRandomIntInclusive(0, 1000 * 60 * 60 * 24)
+    todo.color = colors[utilService.getRandomIntInclusive(0, colors.length - 1)]
     return todo
 }
 
