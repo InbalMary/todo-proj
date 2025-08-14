@@ -1,12 +1,12 @@
 const { useState, useEffect } = React
 
-export function TodoFilter({ filterBy, onSetFilterBy }) {
+export function TodoFilter({ filterBy }) {
 
     const [filterByToEdit, setFilterByToEdit] = useState({...filterBy})
 
     useEffect(() => {
         // Notify parent
-        onSetFilterBy(filterByToEdit)
+        // onSetFilterBy(filterByToEdit)
     }, [filterByToEdit])
 
     function handleChange({ target }) {
