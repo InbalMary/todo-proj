@@ -1,6 +1,8 @@
 const { Link } = ReactRouterDOM
+const { useSelector } = ReactRedux
 
 export function TodoPreview({ todo, onToggleTodo }) {
+    const loggedinUser = useSelector(state => state.loggedinUser)
     return (
         <article className="todo-preview">
             <h2 className={(todo.isDone) ? 'done' : ''} onClick={onToggleTodo}>
