@@ -9,13 +9,15 @@ export const SET_USER = 'SET_USER'
 export const SET_USER_SCORE = 'SET_USER_SCORE'
 
 export const TOGGLE_LOADING = 'TOGGLE_TOGGLE_LOADING'
+export const SET_LOADING = 'SET_LOADING'
 
 export const SET_FILTER = 'SET_FILTER'
+export const CLEAR_FILTER = 'CLEAR_FILTER'
 
 const initialState = {
     todos: [],
     loggedinUser: null,
-    showLoader: false,
+    isLoading: false,
     filterBy: {},
 }
 
@@ -43,10 +45,16 @@ export function appReducer(state = initialState, cmd = {}) {
             return { ...state, loggedinUser: { ...state.loggedinUser, score: cmd.score } }
 
         case TOGGLE_LOADING:
-            return { ...state, showLoader: !state.showLoader }
+            return { ...state, isLoading: !state.isLoading }
+
+        case SET_LOADING:
+            return { ...state, isLoading: cmd.isLoading }
 
         case SET_FILTER:
             return { ...state, filterBy: cmd.filterBy }
+
+        case CLEAR_FILTER:
+            return { ...state, filterBy: {} }
 
         default:
             return state

@@ -1,12 +1,20 @@
-const { useState, useEffect } = React
+const { useState, useEffect, useRef } = React
+const { useSelector } = ReactRedux
+import { setFilter, clearFilter } from '../store/actions/todo.actions.js'
+import { utilService } from '../services/util.service.js'
 
-export function TodoFilter({ filterBy }) {
+export function TodoFilter() {
+    const filterBy = useSelector(state => state.filterBy)
+    const [filterByToEdit, setFilterByToEdit] = useState({ ...filterBy })
 
-    const [filterByToEdit, setFilterByToEdit] = useState({...filterBy})
+    const setFilterDebounced = useRef(utilService.debounce(setFilter, 600)).current
 
     useEffect(() => {
-        // Notify parent
-        // onSetFilterBy(filterByToEdit)
+        setFilterByToEdit({ ...filterBy })
+    }, [filterBy])
+
+    useEffect(() => {
+        setFilterDebounced(filterByToEdit)
     }, [filterByToEdit])
 
     function handleChange({ target }) {
@@ -32,10 +40,10 @@ export function TodoFilter({ filterBy }) {
     // Optional support for LAZY Filtering with a button
     function onSubmitFilter(ev) {
         ev.preventDefault()
-        onSetFilterBy(filterByToEdit)
+        setFilter(filterByToEdit)
     }
 
-    const { txt, importance } = filterByToEdit
+    const { txt = '', importance = '' } = filterByToEdit
     return (
         <section className="todo-filter">
             <h2>Filter Todos</h2>
@@ -47,7 +55,10 @@ export function TodoFilter({ filterBy }) {
                 <input value={importance} onChange={handleChange}
                     type="number" placeholder="By Importance" id="importance" name="importance"
                 />
-
+                <button className='btn' type="button" onClick={() => {
+                    clearFilter()
+                    setFilterByToEdit({ txt: '', importance: '' })
+                }}>Clear Filter</button>
                 <button hidden>Set Filter</button>
             </form>
         </section>
