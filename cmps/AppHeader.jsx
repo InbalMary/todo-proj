@@ -12,6 +12,11 @@ export function AppHeader() {
     const navigate = useNavigate()
     // const [user, setUser] = useState(userService.getLoggedinUser())
     const loggedinUser = useSelector(state => state.loggedinUser)
+    const todos = useSelector(state => state.todos)
+
+    const totalTodos = todos.length
+    const todosDoneCount = todos.filter(todo => todo.isDone).length
+    const progressPercent = totalTodos ? Math.round((todosDoneCount / totalTodos) * 100) : 0
 
     function onLogout() {
         logout()
@@ -40,6 +45,15 @@ export function AppHeader() {
                     <NavLink to="/todo" >Todos</NavLink>
                     <NavLink to="/dashboard" >Dashboard</NavLink>
                 </nav>
+            </section>
+            <section className="todos-progress">
+                <h3>Progress: {progressPercent}%</h3>
+                <div className="progress-bar">
+                    <div
+                        className="progress-fill"
+                        style={{ width: progressPercent + '%' }}
+                    ></div>
+                </div>
             </section>
             <UserMsg />
         </header>
