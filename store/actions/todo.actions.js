@@ -1,5 +1,5 @@
 import { todoService } from '../../services/todo.service.js'
-import { store, ADD_TODO, REMOVE_TODO, SET_TODOS, UPDATE_TODO, SET_FILTER, TOGGLE_LOADING, SET_LOADING, } from '../store.js'
+import { store, ADD_TODO, REMOVE_TODO, SET_TODOS, UPDATE_TODO, SET_FILTER, TOGGLE_LOADING, SET_LOADING, SET_MAX_PAGE, } from '../store.js'
 
 export function loadTodos(filterBy = {}) {
     store.dispatch({ type: SET_LOADING, isLoading: true })
@@ -30,6 +30,10 @@ export function clearFilter() {
     // return _loadTodosWithLoading()
 }
 
+export function setMaxPage() {
+    todoService.getTotalTodos()
+        .then(maxPage => store.dispatch({ type: SET_MAX_PAGE, maxPage }))
+}
 // function _loadTodosWithLoading(filterBy = {}) {
 //     store.dispatch({ type: 'SET_LOADING', isLoading: true })
 //     return todoService.query(filterBy)

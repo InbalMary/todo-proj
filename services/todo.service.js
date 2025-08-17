@@ -3,7 +3,8 @@ import { storageService } from './async-storage.service.js'
 import { userService } from './user.service.js'
 
 const TODO_KEY = 'todoDB'
-
+const PAGE_SIZE = 4
+let totalPages = null
 const colors = [
     '#faafa8',
     '#f39f76',
@@ -28,11 +29,13 @@ export const todoService = {
     getDefaultFilter,
     getFilterFromSearchParams,
     getImportanceStats,
+    getTotalTodos,
 }
 // For Debug (easy access from console):
 window.cs = todoService
 
 function query(filterBy = {}) {
+    const pageIdx = (filterBy.pageIdx !== undefined && filterBy.pageIdx !== null) ? filterBy.pageIdx : 0
     return storageService.query(TODO_KEY)
         .then(todos => {
             if (filterBy.txt) {
@@ -49,6 +52,9 @@ function query(filterBy = {}) {
             } else if (filterBy.isDone === "false") {
                 todos = todos.filter(todo => todo.isDone === false)
             }
+
+            const startIdx = pageIdx * PAGE_SIZE // 0, 4, 8
+            todos = todos.slice(startIdx, startIdx + PAGE_SIZE)
 
             return todos
         })
@@ -71,7 +77,7 @@ function remove(todoId) {
                         txt: todo.txt,
                         actionType: 'Removed'
                     })
-                    .then(() => todo)
+                        .then(() => todo)
                 })
         })
 }
@@ -161,7 +167,13 @@ function _getTodoCountByImportanceMap(todos) {
     return todoCountByImportanceMap
 }
 
-
+function getTotalTodos() {
+    return storageService.query(TODO_KEY)
+        .then(todos => {
+            const totalPages = Math.ceil(todos.length / PAGE_SIZE)
+            return Promise.resolve(totalPages)
+        })
+}
 // Data Model:
 // const todo = {
 //     _id: "gZ6Nvy",

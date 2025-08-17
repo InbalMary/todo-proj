@@ -3,32 +3,33 @@ import { TodoList } from "../cmps/TodoList.jsx"
 import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
-import { clearFilter, loadTodos, removeTodo, saveTodo, setFilter, } from '../store/actions/todo.actions.js'
+import { clearFilter, loadTodos, removeTodo, saveTodo, setFilter, setMaxPage } from '../store/actions/todo.actions.js'
+import { SET_FILTER } from "../store/store.js"
 
 const { useState, useEffect } = React
 const { Link, useSearchParams } = ReactRouterDOM
 const { useSelector, useDispatch } = ReactRedux
 
 export function TodoIndex() {
-    // const [todos, setTodos] = useState(null)
     const todos = useSelector(state => state.todos)
     const isLoading = useSelector(state => state.isLoading)
-    // console.log('isLoading', isLoading)
     const [todoToDelete, setTodoToDelete] = useState(null)
-    // Special hook for accessing search-params:
     const [searchParams, setSearchParams] = useSearchParams()
-    // const defaultFilter = todoService.getFilterFromSearchParams(searchParams)
-    // const [filterBy, setFilterBy] = useState(defaultFilter)
     const filterBy = useSelector(state => state.filterBy)
+    const dispatch = useDispatch()
+    const maxPage = useSelector(state => state.maxPage)
 
     useEffect(() => {
         setSearchParams(filterBy)
+        setMaxPage()
         loadTodos(filterBy)
             .catch(err => {
-                console.eror('err:', err)
+                console.error('err:', err)
                 showErrorMsg('Cannot load todos')
             })
     }, [filterBy])
+
+    
 
     function onRemoveTodo(todoId) {
         removeTodo(todoId)
@@ -42,6 +43,11 @@ export function TodoIndex() {
                 showErrorMsg('Cannot remove todo ' + todoId)
                 setTodoToDelete(null)
             })
+    }
+
+    function onChangePage(idx) {
+        const newFilterBy = { ...filterBy, pageIdx: idx }
+        dispatch({ type: SET_FILTER, filterBy: newFilterBy })
     }
 
     function onToggleTodo(todo) {
@@ -83,6 +89,18 @@ export function TodoIndex() {
                     </div>
                 </div>
             )}
+
+            {maxPage > 0 && <footer>
+                <div>
+                    {Array.from({ length: maxPage }, (_, idx) => (
+                        <button onClick={() => onChangePage(idx)}
+                            key={idx}
+                            className={`page-btn ${filterBy.pageIdx === idx ? 'active' : ''}`}>
+                            {idx + 1}
+                        </button>
+                    ))}
+                </div>
+            </footer>}
         </section>
     )
 }
