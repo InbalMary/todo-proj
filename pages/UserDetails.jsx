@@ -2,6 +2,7 @@ const { useState, useEffect } = React
 const { useParams, useNavigate, Link } = ReactRouterDOM
 const { useSelector, useDispatch } = ReactRedux
 
+import { utilService } from '../services/util.service.js'
 import { userService } from "../services/user.service.js"
 import { TodoList } from '../cmps/TodoList.jsx'
 import { loadUser, updateUser } from '../store/actions/user.actions.js'
@@ -64,7 +65,7 @@ export function UserDetails() {
     if (!userDetails) return <div>Loading...</div>
 
     const userTodos = userDetails.activities || []
-
+console.log('userTodos', userTodos)
     return (
         <section
             className="user-details"
@@ -78,7 +79,17 @@ export function UserDetails() {
             <section>
                 {!userTodos.length && <h2>No todos to show</h2>}
                 {userTodos.length > 0 && <h3>Manage your todos</h3>}
-                <TodoList todos={userTodos} />
+                <ul>
+                    {userTodos.map((activity, idx) => (
+                        <li key={idx}>
+                            <p>
+                                {utilService.formatTimeAgo(activity.updatedAt)}: 
+                                <strong> {activity.actionType} a Todo - '{activity.txt}'</strong>
+                            </p>
+                        </li>
+                    ))}
+                </ul>
+
             </section>
 
             {isLoggedinUser && (
@@ -88,7 +99,7 @@ export function UserDetails() {
                         <input
                             type="text"
                             name="fullname"
-                            value={userDetails.fullname}
+                            value={userDetails.fullname || ''}
                             onChange={handleChange}
                         />
                     </label>
@@ -97,7 +108,7 @@ export function UserDetails() {
                         <input
                             type="color"
                             name="prefs.color"
-                            value={userDetails.prefs.color}
+                            value={userDetails.prefs.color || '#000000'}
                             onChange={handleChange}
                         />
                     </label>
@@ -106,7 +117,7 @@ export function UserDetails() {
                         <input
                             type="color"
                             name="prefs.bgColor"
-                            value={userDetails.prefs.bgColor}
+                            value={userDetails.prefs.bgColor || '#ffffff'}
                             onChange={handleChange}
                         />
                     </label>

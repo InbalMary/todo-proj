@@ -44,7 +44,7 @@ function query(filterBy = {}) {
                 todos = todos.filter(todo => todo.importance >= filterBy.importance)
             }
 
-             if (filterBy.isDone === "true") {
+            if (filterBy.isDone === "true") {
                 todos = todos.filter(todo => todo.isDone === true)
             } else if (filterBy.isDone === "false") {
                 todos = todos.filter(todo => todo.isDone === false)
@@ -63,17 +63,29 @@ function get(todoId) {
 }
 
 function remove(todoId) {
-    return storageService.remove(TODO_KEY, todoId)
+    return storageService.get(TODO_KEY, todoId)
+        .then(todo => {
+            return storageService.remove(TODO_KEY, todoId)
+                .then(() => {
+                    return userService.addActivity({
+                        txt: todo.txt,
+                        actionType: 'Removed'
+                    })
+                    .then(() => todo)
+                })
+        })
 }
 
 function save(todo) {
     if (todo._id) {
         // TODO - updatable fields
         todo.updatedAt = Date.now()
+        todo.actionType = 'Updated'
         return storageService.put(TODO_KEY, todo)
     } else {
         todo.createdAt = todo.updatedAt = Date.now()
         todo.creator = userService.getLoggedinUser()
+        todo.actionType = 'Added'
         return storageService.post(TODO_KEY, todo)
     }
 }

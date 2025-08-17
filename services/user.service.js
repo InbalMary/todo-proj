@@ -65,8 +65,14 @@ function updateBalance(diff) {
         })
 }
 
-function addActivity(activity) {
-    console.log('Adding activity:', activity)
+function addActivity(act) {
+    const timestamp = Date.now();
+    const activity = {
+        txt: act.txt,
+        actionType: act.actionType + ' a Todo',
+        updatedAt: timestamp,
+    }
+    console.log('Adding activity:', activity);
     return userService.getById(getLoggedinUser()._id)
         .then(user => {
             user.activities = [...(user.activities || []), activity]

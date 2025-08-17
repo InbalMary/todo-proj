@@ -33,6 +33,7 @@ export function TodoIndex() {
     function onRemoveTodo(todoId) {
         removeTodo(todoId)
             .then(() => {
+                const todo = getTodoById(todoId)
                 showSuccessMsg(`Todo removed`)
                 setTodoToDelete(null)
             })
