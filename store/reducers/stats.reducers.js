@@ -1,3 +1,4 @@
+import { todoService } from "../../services/todo.service.js"
 
 export const TOGGLE_LOADING = 'TOGGLE_TOGGLE_LOADING'
 export const SET_LOADING = 'SET_LOADING'
@@ -9,7 +10,7 @@ export const SET_MAX_PAGE = 'SET_MAX_PAGE'
 
 const initialState = {
     isLoading: false,
-    filterBy: {},
+    filterBy: todoService.getDefaultFilter(),
     maxPage: 0
 }
 
@@ -22,7 +23,7 @@ export function statReducer(state = initialState, cmd = {}) {
             return { ...state, isLoading: cmd.isLoading }
 
         case SET_FILTER:
-            return { ...state, filterBy: cmd.filterBy }
+            return { ...state, filterBy: { ...state.filterBy, ...cmd.filterBy } }
 
         case CLEAR_FILTER:
             return { ...state, filterBy: {} }

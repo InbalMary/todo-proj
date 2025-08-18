@@ -26,7 +26,7 @@ export function UserDetails() {
         if (user) {
             setUserDetails({
                 ...user,
-                prefs: user.prefs || { color: 'black', bgColor: 'white' }
+                prefs: user.prefs || { color: '#000000', bgColor: '#ffffff' }
             })
         }
     }, [user])
