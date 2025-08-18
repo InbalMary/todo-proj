@@ -30,6 +30,7 @@ export const todoService = {
     getFilterFromSearchParams,
     getImportanceStats,
     getTotalTodos,
+    getStats,
 }
 // For Debug (easy access from console):
 window.cs = todoService
@@ -182,6 +183,15 @@ function getTotalTodos() {
             return Promise.resolve(totalPages)
         })
 }
+
+function getStats() {
+    return storageService.query(TODO_KEY)
+        .then(todos => ({
+            totalTodos: todos.length,
+            completedTodos: todos.filter(todo => todo.isDone).length
+        }))
+}
+
 // Data Model:
 // const todo = {
 //     _id: "gZ6Nvy",

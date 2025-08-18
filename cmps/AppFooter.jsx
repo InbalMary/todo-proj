@@ -1,10 +1,19 @@
-const { useSelector } = ReactRedux
-export function AppFooter() {
-    const todos = useSelector(state => state.todos)
+import { loadTodosStats } from "../store/actions/todo.actions.js"
 
-    const totalTodos = todos.length
-    const todosDoneCount = todos.filter(todo => todo.isDone).length
-    const progressPercent = totalTodos ? Math.round((todosDoneCount / totalTodos) * 100) : 0
+const { useSelector } = ReactRedux
+const { useEffect } = React
+
+export function AppFooter() {
+    const { totalTodos = 0, completedTodos = 0 } = useSelector(state => ({
+        totalTodos: state.totalTodos || 0,
+        completedTodos: state.completedTodos || 0
+    }))
+    
+    useEffect(() => {
+        loadTodosStats()
+    }, [])
+    
+    const progressPercent = totalTodos ? Math.round((completedTodos / totalTodos) * 100) : 0
 
     return (
         <footer className="app-footer full main-layout">
@@ -17,7 +26,6 @@ export function AppFooter() {
                     ></div>
                 </div>
             </section>
-            
         </footer>
     )
 }

@@ -1,6 +1,6 @@
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
-import { saveTodo } from '../store/actions/todo.actions.js'
+import { loadTodosStats, saveTodo } from '../store/actions/todo.actions.js'
 import { addActivity, balance } from '../store/actions/user.actions.js'
 import { userService } from '../services/user.service.js'
 
@@ -53,6 +53,7 @@ export function TodoEdit() {
         }
         saveTodo(todoToEdit)
             .then(({ todo: savedTodo }) => {
+                loadTodosStats()
                 addActivity(savedTodo)
                     .then(() => {
                         navigate('/todo')

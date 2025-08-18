@@ -1,12 +1,14 @@
 const { useSelector, useDispatch } = ReactRedux
 const { Link, NavLink } = ReactRouterDOM
 const { useNavigate } = ReactRouter
+const { useEffect } = React
 
 import { logout } from '../store/actions/user.actions.js'
 import { UserMsg } from "./UserMsg.jsx"
 import { LoginSignup } from './LoginSignup.jsx'
 import { showErrorMsg } from '../services/event-bus.service.js'
 import { userService } from "../services/user.service.js"
+import { loadTodosStats } from '../store/actions/todo.actions.js'
 
 export function AppHeader() {
     const navigate = useNavigate()
@@ -15,9 +17,16 @@ export function AppHeader() {
     const todos = useSelector(state => state.todos)
     const loggedinUser = userService.getLoggedinUser()
 
-    const totalTodos = todos.length
-    const todosDoneCount = todos.filter(todo => todo.isDone).length
-    const progressPercent = totalTodos ? Math.round((todosDoneCount / totalTodos) * 100) : 0
+    const { totalTodos = 0, completedTodos = 0 } = useSelector(state => ({
+        totalTodos: state.totalTodos || 0,
+        completedTodos: state.completedTodos || 0
+    }))
+
+    useEffect(() => {
+        loadTodosStats()
+    }, [])
+
+    const progressPercent = totalTodos ? Math.round((completedTodos / totalTodos) * 100) : 0
 
     function onLogout() {
         logout()
@@ -25,7 +34,7 @@ export function AppHeader() {
                 showErrorMsg('OOPs try again')
             })
     }
-    console.log('user', user)
+    // console.log('user', user)
     return (
         <header className="app-header full main-layout">
             <section className="header-container">

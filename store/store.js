@@ -5,6 +5,7 @@ export const SET_TODOS = 'SET_TODOS'
 export const REMOVE_TODO = 'REMOVE_TODO'
 export const ADD_TODO = 'ADD_TODO'
 export const UPDATE_TODO = 'UPDATE_TODO'
+export const SET_TODOS_STATS = 'SET_TODOS_STATS'
 
 export const SET_USER = 'SET_USER'
 export const SET_USER_BALANCE = 'SET_USER_BALANCE'
@@ -41,6 +42,9 @@ export function appReducer(state = initialState, cmd = {}) {
         case UPDATE_TODO:
             var todos = state.todos.map(todo => todo._id === cmd.todo._id ? cmd.todo : todo)
             return { ...state, todos }
+
+        case SET_TODOS_STATS:
+            return { ...state, totalTodos: cmd.stats.totalTodos, completedTodos: cmd.stats.completedTodos }
 
         case SET_USER:
             return { ...state, loggedinUser: cmd.loggedinUser }
