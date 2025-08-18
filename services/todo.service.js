@@ -53,6 +53,14 @@ function query(filterBy = {}) {
                 todos = todos.filter(todo => todo.isDone === false)
             }
 
+            if (filterBy.sort) {
+                if (filterBy.sort === 'txt') {
+                    todos = todos.sort((a, b) => a.txt.localeCompare(b.txt))
+                } else if (filterBy.sort === 'createdAt') {
+                    todos = todos.sort((a, b) => a.createdAt - b.createdAt)
+                }
+            }
+
             const startIdx = pageIdx * PAGE_SIZE // 0, 4, 8
             todos = todos.slice(startIdx, startIdx + PAGE_SIZE)
 

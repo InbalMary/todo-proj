@@ -1,4 +1,5 @@
 import { TodoFilter } from "../cmps/TodoFilter.jsx"
+import { TodoSort } from '../cmps/TodoSort.jsx'
 import { TodoList } from "../cmps/TodoList.jsx"
 import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
@@ -29,7 +30,7 @@ export function TodoIndex() {
             })
     }, [filterBy])
 
-    
+
 
     function onRemoveTodo(todoId) {
         removeTodo(todoId)
@@ -66,6 +67,7 @@ export function TodoIndex() {
     return (
         <section className="todo-index">
             <TodoFilter filterBy={filterBy} setFilter={setFilter} clearFilter={clearFilter} />
+            <TodoSort filterBy={filterBy} setFilter={setFilter} />
             <div>
                 <Link to="/todo/edit" className="btn" >Add Todo</Link>
             </div>
