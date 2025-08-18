@@ -5,20 +5,20 @@ import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
 import { clearFilter, loadTodos, loadTodosStats, removeTodo, saveTodo, setFilter, setMaxPage } from '../store/actions/todo.actions.js'
-import { SET_FILTER } from "../store/store.js"
+import { SET_FILTER } from "../store/reducers/stats.reducers.js"
 
 const { useState, useEffect } = React
 const { Link, useSearchParams } = ReactRouterDOM
 const { useSelector, useDispatch } = ReactRedux
 
 export function TodoIndex() {
-    const todos = useSelector(state => state.todos)
-    const isLoading = useSelector(state => state.isLoading)
+    const todos = useSelector(state => state.todoModule.todos)
+    const isLoading = useSelector(state => state.statModule.isLoading)
     const [todoToDelete, setTodoToDelete] = useState(null)
     const [searchParams, setSearchParams] = useSearchParams()
-    const filterBy = useSelector(state => state.filterBy)
+    const filterBy = useSelector(state => state.statModule.filterBy)
     const dispatch = useDispatch()
-    const maxPage = useSelector(state => state.maxPage)
+    const maxPage = useSelector(state => state.statModule.maxPage)
 
     useEffect(() => {
         setSearchParams(filterBy)

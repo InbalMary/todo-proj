@@ -8,7 +8,7 @@ import { TodoList } from '../cmps/TodoList.jsx'
 import { loadUser, updateUser } from '../store/actions/user.actions.js'
 
 export function UserDetails() {
-    const user = useSelector(state => state.loggedinUser)
+    const user = useSelector(state => state.userModule.loggedinUser)
     const loggedinUser = userService.getLoggedinUser()
     const [userDetails, setUserDetails] = useState(null)
 

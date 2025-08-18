@@ -1,5 +1,8 @@
 import { todoService } from '../../services/todo.service.js'
-import { store, ADD_TODO, REMOVE_TODO, SET_TODOS, UPDATE_TODO, SET_FILTER, TOGGLE_LOADING, SET_LOADING, SET_MAX_PAGE, SET_TODOS_STATS, } from '../store.js'
+import { SET_FILTER, SET_LOADING, SET_MAX_PAGE } from '../reducers/stats.reducers.js'
+import { ADD_TODO, REMOVE_TODO, SET_TODOS, SET_TODOS_STATS, UPDATE_TODO } from '../reducers/todo.reducers.js'
+import { store } from '../store.js'
+// import { store, ADD_TODO, REMOVE_TODO, SET_TODOS, UPDATE_TODO, SET_FILTER, TOGGLE_LOADING, SET_LOADING, SET_MAX_PAGE, SET_TODOS_STATS, } from '../store.js'
 
 export function loadTodos(filterBy = {}) {
     store.dispatch({ type: SET_LOADING, isLoading: true })

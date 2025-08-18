@@ -13,13 +13,13 @@ import { loadTodosStats } from '../store/actions/todo.actions.js'
 export function AppHeader() {
     const navigate = useNavigate()
     // const [user, setUser] = useState(userService.getLoggedinUser())
-    const user = useSelector(state => state.loggedinUser)
-    const todos = useSelector(state => state.todos)
+    const user = useSelector(state => state.userModule.loggedinUser)
+    const todos = useSelector(state => state.todoModule.todos)
     const loggedinUser = userService.getLoggedinUser()
 
     const { totalTodos = 0, completedTodos = 0 } = useSelector(state => ({
-        totalTodos: state.totalTodos || 0,
-        completedTodos: state.completedTodos || 0
+        totalTodos: state.todoModule.totalTodos || 0,
+        completedTodos: state.todoModule.completedTodos || 0
     }))
 
     useEffect(() => {

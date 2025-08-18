@@ -5,8 +5,8 @@ const { useEffect } = React
 
 export function AppFooter() {
     const { totalTodos = 0, completedTodos = 0 } = useSelector(state => ({
-        totalTodos: state.totalTodos || 0,
-        completedTodos: state.completedTodos || 0
+        totalTodos: state.todoModule.totalTodos || 0,
+        completedTodos: state.todoModule.completedTodos || 0
     }))
     
     useEffect(() => {
