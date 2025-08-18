@@ -72,8 +72,14 @@ function addActivity(act) {
         actionType: act.actionType + ' a Todo',
         updatedAt: timestamp,
     }
+    const loggedinUser = getLoggedinUser()
+    if (!loggedinUser) {
+        console.log('No logged-in user')
+        return Promise.reject('No logged-in user')
+    }
+
     console.log('Adding activity:', activity);
-    return userService.getById(getLoggedinUser()._id)
+    return userService.getById(loggedinUser._id)
         .then(user => {
             user.activities = [...(user.activities || []), activity]
             return storageService.put(STORAGE_KEY, user)

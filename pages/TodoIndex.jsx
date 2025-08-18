@@ -4,7 +4,7 @@ import { TodoList } from "../cmps/TodoList.jsx"
 import { DataTable } from "../cmps/data-table/DataTable.jsx"
 import { todoService } from "../services/todo.service.js"
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service.js"
-import { clearFilter, loadTodos, removeTodo, saveTodo, setFilter, setMaxPage } from '../store/actions/todo.actions.js'
+import { clearFilter, loadTodos, loadTodosStats, removeTodo, saveTodo, setFilter, setMaxPage } from '../store/actions/todo.actions.js'
 import { SET_FILTER } from "../store/store.js"
 
 const { useState, useEffect } = React
@@ -35,9 +35,9 @@ export function TodoIndex() {
     function onRemoveTodo(todoId) {
         removeTodo(todoId)
             .then(() => {
-                const todo = getTodoById(todoId)
                 showSuccessMsg(`Todo removed`)
                 setTodoToDelete(null)
+                loadTodosStats()
             })
             .catch(err => {
                 console.log('err:', err)
