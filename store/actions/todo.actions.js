@@ -24,13 +24,15 @@ export function saveTodo(todoToSave) {
 }
 
 export function setFilter(filterBy) {
-    store.dispatch({ type: SET_FILTER, filterBy })
-    // return _loadTodosWithLoading(filterBy)
+    const filterWithResetPage = { ...filterBy, pageIdx: 0 }
+    store.dispatch({ type: SET_FILTER, filterBy: filterWithResetPage })
+    return loadTodos(filterWithResetPage)
 }
 
 export function clearFilter() {
-    store.dispatch({ type: SET_FILTER, filterBy: {} })
-    // return _loadTodosWithLoading()
+    const resetFilter = { pageIdx: 0 }    
+    store.dispatch({ type: SET_FILTER, filterBy: resetFilter })
+    return loadTodos(resetFilter)
 }
 
 export function setMaxPage() {
@@ -42,10 +44,3 @@ export function loadTodosStats() {
     return todoService.getStats()
         .then(stats => store.dispatch({ type: SET_TODOS_STATS, stats }))
 }
-
-// function _loadTodosWithLoading(filterBy = {}) {
-//     store.dispatch({ type: 'SET_LOADING', isLoading: true })
-//     return todoService.query(filterBy)
-//         .then(todos => store.dispatch({ type: SET_TODOS, todos }))
-//         .finally(() => store.dispatch({ type: 'SET_LOADING', isLoading: false }))
-// }

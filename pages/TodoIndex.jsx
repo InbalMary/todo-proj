@@ -30,7 +30,9 @@ export function TodoIndex() {
             })
     }, [filterBy])
 
-
+useEffect(() => {
+        console.log('maxPage changed to:', maxPage)
+    }, [maxPage])
 
     function onRemoveTodo(todoId) {
         removeTodo(todoId)
@@ -38,6 +40,7 @@ export function TodoIndex() {
                 showSuccessMsg(`Todo removed`)
                 setTodoToDelete(null)
                 loadTodosStats()
+                setMaxPage()
             })
             .catch(err => {
                 console.log('err:', err)
@@ -59,7 +62,7 @@ export function TodoIndex() {
             })
             .catch(err => {
                 console.log('err:', err)
-                showErrorMsg('Cannot toggle todo ' + todoId)
+                showErrorMsg('Cannot toggle todo ' + todo._id)
             })
     }
 

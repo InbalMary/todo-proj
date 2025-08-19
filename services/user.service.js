@@ -69,7 +69,7 @@ function addActivity(act) {
     const timestamp = Date.now();
     const activity = {
         txt: act.txt,
-        actionType: act.actionType + ' a Todo',
+        actionType: act.actionType,
         updatedAt: timestamp,
     }
     const loggedinUser = getLoggedinUser()
