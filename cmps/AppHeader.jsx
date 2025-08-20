@@ -11,8 +11,6 @@ import { userService } from "../services/user.service.js"
 import { loadTodosStats } from '../store/actions/todo.actions.js'
 
 export function AppHeader() {
-    const navigate = useNavigate()
-    // const [user, setUser] = useState(userService.getLoggedinUser())
     const user = useSelector(state => state.userModule.loggedinUser)
     const todos = useSelector(state => state.todoModule.todos)
     const loggedinUser = userService.getLoggedinUser()
@@ -34,9 +32,24 @@ export function AppHeader() {
                 showErrorMsg('OOPs try again')
             })
     }
+
+    function getStyleByUser() {
+        const prefs = {
+            color: '',
+            backgroundColor: ''
+        }
+
+        if (user && user.pref) {
+            prefs.color = user.pref.color
+            prefs.backgroundColor = user.pref.bgColor
+        }
+
+        return prefs
+    }
+
     // console.log('user', user)
     return (
-        <header className="app-header full main-layout">
+        <header style={getStyleByUser()} className="app-header full main-layout">
             <section className="header-container">
                 <h1>React Todo App</h1>
                 {user ? (
@@ -46,7 +59,7 @@ export function AppHeader() {
                                 Hello {loggedinUser.fullname}
                             </Link>
                         )}
-                        <p>Balance: {user.balance}$</p>
+                        <p>Balance: {loggedinUser.balance}$</p>
                         <button onClick={onLogout}>Logout</button>
                     </ section >
                 ) : (

@@ -12,6 +12,7 @@ export const userService = {
     updateBalance,
     addActivity,
     update,
+    getDefaultPrefs,
 }
 const STORAGE_KEY_LOGGEDIN = 'user'
 const STORAGE_KEY = 'userDB'
@@ -38,6 +39,7 @@ function signup({ username, password, fullname }) {
     user.createdAt = user.updatedAt = Date.now()
     user.balance = 10000
     user.activities = []
+    user.pref = getDefaultPrefs()
     console.log('user', user)
     return storageService.post(STORAGE_KEY, user)
         .then(_setLoggedinUser)
@@ -90,22 +92,36 @@ function addActivity(act) {
         })
 }
 
-function update(user) {
-    user.updatedAt = Date.now()
+function update(userToUpdate) {
+    userToUpdate.updatedAt = Date.now()
 
-    return storageService.put(STORAGE_KEY, user)
-        .then(savedUser => {
-            const loggedinUser = getLoggedinUser()
-            if (loggedinUser && loggedinUser._id === savedUser._id) {
-                _setLoggedinUser(savedUser)
-            }
-            return savedUser
+    const loggedinUserId = getLoggedinUser()._id
+    return getById(loggedinUserId)
+        .then(user => {
+            user = { ...user, ...userToUpdate }
+            return storageService.put(STORAGE_KEY, user)
+                .then((savedUser) => {
+                    _setLoggedinUser(savedUser)
+                    return savedUser
+                })
         })
 }
 
+// function updateUserPreffs(userToUpdate) {
+//     const loggedinUserId = getLoggedinUser()._id
+//     return getById(loggedinUserId)
+//         .then(user => {
+//             user = { ...user, ...userToUpdate }
+//             return storageService.put(STORAGE_KEY, user)
+//                 .then((savedUser) => {
+//                     _setLoggedinUser(savedUser)
+//                     return savedUser
+//                 })
+//         })
+// }
 
 function _setLoggedinUser(user) {
-    const userToSave = { _id: user._id, fullname: user.fullname, balance: user.balance, activities: user.activities }
+    const userToSave = { _id: user._id, fullname: user.fullname, balance: user.balance, activities: user.activities, pref: user.pref }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN, JSON.stringify(userToSave))
     return userToSave
 }
@@ -116,6 +132,10 @@ function getEmptyCredentials() {
         username: 'muki',
         password: 'muki1',
     }
+}
+
+function getDefaultPrefs() {
+    return { color: '#eeeeee', bgColor: "#191919", fullname: '' }
 }
 
 // signup({username: 'muki', password: 'muki1', fullname: 'Muki Ja'})

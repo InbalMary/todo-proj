@@ -3,33 +3,50 @@ const { useParams, useNavigate, Link } = ReactRouterDOM
 const { useSelector, useDispatch } = ReactRedux
 
 import { utilService } from '../services/util.service.js'
-import { userService } from "../services/user.service.js"
-import { TodoList } from '../cmps/TodoList.jsx'
 import { loadUser, updateUser } from '../store/actions/user.actions.js'
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service.js'
 
 export function UserDetails() {
-    const user = useSelector(state => state.userModule.loggedinUser)
-    const loggedinUser = userService.getLoggedinUser()
+    const loggedinUser = useSelector(state => state.userModule.loggedinUser)
+    const watchedUser = useSelector(state => state.userModule.watchedUser)
     const [userDetails, setUserDetails] = useState(null)
 
     const params = useParams()
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
-
-    const isLoggedinUser = loggedinUser && loggedinUser._id === params.userId
 
     useEffect(() => {
         loadUser(params.userId)
     }, [params.userId])
 
     useEffect(() => {
-        if (user) {
-            setUserDetails({
-                ...user,
-                prefs: user.prefs || { color: '#000000', bgColor: '#ffffff' }
-            })
+        if (watchedUser && loggedinUser) loadUserData()
+    }, [watchedUser, loggedinUser])
+
+    function loadUserData() {
+        setUserDetails({
+            fullname: watchedUser.fullname || '',
+            color: (watchedUser.pref && watchedUser.pref.color) || '#eeeeee',
+            bgColor: (watchedUser.pref && watchedUser.pref.bgColor) || '#191919',
+            activities: watchedUser.activities || []
+        })
+    }
+
+    function onEditUser(ev) {
+        ev.preventDefault()
+        const userToUpdate = {
+            ...watchedUser,
+            fullname: userDetails.fullname,
+            pref: { color: userDetails.color, bgColor: userDetails.bgColor }
         }
-    }, [user])
+        updateUser(userToUpdate)
+            .then(() => {
+                showSuccessMsg('User updated successfully!')
+                // setCssVarVal('--clr1', userDetails.bgColor)
+            })
+            .catch(err => {
+                console.error('Cannot update user:', err)
+                showErrorMsg('Cannot update user')
+            })
+    }
 
     function handleChange({ target }) {
         const field = target.name
@@ -43,47 +60,45 @@ export function UserDetails() {
             case 'checkbox':
                 value = target.checked
                 break
-            default: break
         }
-
-        if (field.startsWith('prefs.')) {
-            const key = field.split('.')[1]
-            setUserDetails(prev => ({
-                ...prev,
-                prefs: { ...prev.prefs, [key]: value }
-            }))
-        } else {
-            setUserDetails(prev => ({ ...prev, [field]: value }))
-        }
+        setUserDetails((prevUser) => ({ ...prevUser, [field]: value }))
     }
 
-    function onSave(ev) {
-        ev.preventDefault()
-        updateUser(userDetails)
-    }
+    if (!watchedUser || !userDetails) return <div>No user...</div>
 
-    if (!userDetails) return <div>Loading...</div>
+    const { activities, fullname, color, bgColor } = userDetails
+    const isOwnProfile = loggedinUser && watchedUser && loggedinUser._id === watchedUser._id
 
-    const userTodos = userDetails.activities || []
-console.log('userTodos', userTodos)
     return (
         <section
             className="user-details"
             style={{
-                color: userDetails.prefs.color,
-                backgroundColor: userDetails.prefs.bgColor
+                color: color,
+                backgroundColor: bgColor
             }}
         >
-            <h1>User: {userDetails.fullname}</h1>
+            <h1>User Profile: {fullname}</h1>
+
+            {isOwnProfile && (
+                <form className='activities-form' onSubmit={onEditUser}>
+                    <label htmlFor="fullname">Name:</label>
+                    <input type="text" id="fullname" name="fullname" value={fullname} onChange={handleChange} />
+                    <label htmlFor="name">Color:</label>
+                    <input type="color" name="color" value={color} onChange={handleChange} />
+                    <label htmlFor="name">BG Color:</label>
+                    <input type="color" name="bgColor" value={bgColor} onChange={handleChange} />
+                    <button type="submit">save</button>
+                </form>
+            )}
 
             <section>
-                {!userTodos.length && <h2>No todos to show</h2>}
-                {userTodos.length > 0 && <h3>Manage your todos</h3>}
+                {!activities.length && <h2>No activities to show</h2>}
+                {activities.length > 0 && <h3>{isOwnProfile ? 'Manage your todos' : 'User activities'}</h3>}
                 <ul>
-                    {userTodos.map((activity, idx) => (
+                    {activities.map((activity, idx) => (
                         <li key={idx}>
                             <p>
-                                {utilService.formatTimeAgo(activity.updatedAt)}: 
+                                {utilService.formatTimeAgo(activity.updatedAt)}:
                                 <strong> {activity.actionType} a Todo - '{activity.txt}'</strong>
                             </p>
                         </li>
@@ -91,39 +106,6 @@ console.log('userTodos', userTodos)
                 </ul>
 
             </section>
-
-            {isLoggedinUser && (
-                <form onSubmit={onSave} className="edit-prefs">
-                    <label>
-                        Fullname:
-                        <input
-                            type="text"
-                            name="fullname"
-                            value={userDetails.fullname || ''}
-                            onChange={handleChange}
-                        />
-                    </label>
-                    <label>
-                        Text Color:
-                        <input
-                            type="color"
-                            name="prefs.color"
-                            value={userDetails.prefs.color || '#000000'}
-                            onChange={handleChange}
-                        />
-                    </label>
-                    <label>
-                        Background Color:
-                        <input
-                            type="color"
-                            name="prefs.bgColor"
-                            value={userDetails.prefs.bgColor || '#ffffff'}
-                            onChange={handleChange}
-                        />
-                    </label>
-                    <button>Save</button>
-                </form>
-            )}
 
             <Link to="/">Back Home</Link>
         </section>

@@ -3,12 +3,14 @@ const { useSelector } = ReactRedux
 
 export function TodoPreview({ todo, onToggleTodo }) {
     const loggedinUser = useSelector(state => state.userModule.loggedinUser)
+    const createdAt = new Date(todo.createdAt).toLocaleDateString('he')
     return (
         <article className="todo-preview">
             <h2 className={(todo.isDone) ? 'done' : ''} onClick={onToggleTodo}>
                 Todo: {todo.txt}
             </h2>
             <h4>Todo Importance: {todo.importance}</h4>
+            <h4>Created At: {createdAt}</h4>
             {todo.creator ?
                 <p>Creator: <Link to={`/user/${todo.creator._id}`}><span>{todo.creator.fullname}</span></Link></p>
                 : <span></span>}

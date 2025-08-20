@@ -6,12 +6,14 @@ import { userService } from '../services/user.service.js'
 
 const { useState, useEffect } = React
 const { useNavigate, useParams } = ReactRouterDOM
+const { useSelector } = ReactRedux
 
 export function TodoEdit() {
 
     const [todoToEdit, setTodoToEdit] = useState(todoService.getEmptyTodo())
     const navigate = useNavigate()
     const params = useParams()
+    const user = useSelector(state => state.userModule.loggedinUser)
 
     useEffect(() => {
         if (params.todoId) loadTodo()
@@ -46,7 +48,6 @@ export function TodoEdit() {
 
     function onSaveTodo(ev) {
         ev.preventDefault()
-        const user = userService.getLoggedinUser()
         if (!user) {
             showErrorMsg('You must be logged in to create a todo')
             return
